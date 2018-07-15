@@ -4,42 +4,18 @@ source( "lib/functions_preload.R")
 detach_all_packages()
 
 safe_load("wrapr" )
-safe_load("data.table")
-safe_load("seas")
-safe_load("magrittr")
-#safe_load("ggplot2")
-#safe_load("plyr")
-#safe_load("tidyr")
 safe_load("stringr")
-safe_load("broom")
 safe_load("knitr")
 safe_load("kableExtra")
 safe_load("pander")
-safe_load("lubridate")
+safe_load("workflowr")
 
-# new map functions
-safe_load("tmap", 'https://cloud.r-project.org')
-safe_load("tmaptools", 'https://cloud.r-project.org')
-safe_load("grid")
 
-safe_load("readstata13" )
-safe_load("foreign" )
 safe_load("wrapr" )   # for the qc function
 
-safe_load("ordinal" )
-safe_load("DataCache" )
-safe_load("shiny" )
 safe_load("tidyverse")
 
 
-# old map functions
-#safe_load("maptools")
-#gpclibpermit()
-#safe_load("rcolorbrewer")
-#safe_load("ggmap")
-#safe_load("ggrepel")
-
-#source ("../r/loginlocal.r")
 
 keep <- function(x, name) {assign(as.character(substitute(name)), x, pos = 1)}
 qw <- function(x) unlist(strsplit(x, "[[:space:]]+"))
