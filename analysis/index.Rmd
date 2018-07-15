@@ -8,4 +8,4 @@ output:
 
 Welcome to my research website.
 
-Here is a link to the [balanced sleep apneoa dataset workings](createApneaSample.html), and [actual dataset](../blob/master/ap_balanced.csv).
+Here is a link to the [balanced sleep apneoa dataset workings](createApneaSample.html), and [actual resulting dataset](https://github.com/dewoller/sleep_apneoa/raw/master/output/ap_balanced.csv).
