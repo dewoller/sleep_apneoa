@@ -326,7 +326,8 @@ div.section {
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
-<p><details> <summary> <strong style="color:red;">✖</strong> <strong>R Markdown file:</strong> uncommitted changes </summary> The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
 </details>
 </li>
 <li>
@@ -345,14 +346,10 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/dewoller/sleep_apneoa/tree/8b93f115750b824c6da52f5b6232982f6379dc59" target="_blank">8b93f11</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/dewoller/sleep_apneoa/tree/76bc38b3fff214041aa77ed36e4acb4a329b7c38" target="_blank">76bc38b</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
-Unstaged changes:
-    Modified:   analysis/createApneaSample.Rmd
-    Modified:   lib/functions.R
-    Modified:   lib/get_data.R
-
+working directory clean
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
 </li>
@@ -385,6 +382,57 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/dewoller/sleep_apneoa/blob/76bc38b3fff214041aa77ed36e4acb4a329b7c38/analysis/createApneaSample.Rmd" target="_blank">76bc38b</a>
+</td>
+<td style="text-align:left;">
+Dennis Wollersheim
+</td>
+<td style="text-align:left;">
+2018-07-16
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/createApneaSample.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/dewoller/sleep_apneoa/2f3b338ae19708dd6632d87fce8b890102282e84/docs/createApneaSample.html" target="_blank">2f3b338</a>
+</td>
+<td style="text-align:left;">
+Dennis Wollersheim
+</td>
+<td style="text-align:left;">
+2018-07-16
+</td>
+<td style="text-align:left;">
+Balanced sleep apenea
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/dewoller/sleep_apneoa/blob/c205708defda43f10beadbe2412bb77bb35eb9b8/analysis/createApneaSample.Rmd" target="_blank">c205708</a>
+</td>
+<td style="text-align:left;">
+Dennis Wollersheim
+</td>
+<td style="text-align:left;">
+2018-07-16
+</td>
+<td style="text-align:left;">
+workflowr::wflow_git_commit(all = TRUE)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/dewoller/sleep_apneoa/blob/8b93f115750b824c6da52f5b6232982f6379dc59/analysis/createApneaSample.Rmd" target="_blank">8b93f11</a>
 </td>
 <td style="text-align:left;">
@@ -405,85 +453,29 @@ initial commit;
 
 <div id="motivation" class="section level1">
 <h1>motivation</h1>
-<p>We want to investigate the sleep apnea pp, and to do this, we need to have something to compare them to. We will create a list of patients, consisting of all the sleep apnea people, and then also, people who are similiar to the sleep apnea people, who have not had a sleep anpnea test.</p>
-<pre><code>Loading required package: wrapr</code></pre>
-<pre><code>Loading required package: data.table</code></pre>
-<pre><code>
-Attaching package: &#39;data.table&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:wrapr&#39;:
+<p>We want to investigate the sleep apnea pp, and to do this, we need to have something to compare them to. We will create a list of patients, consisting of all the sleep apnea people, and then also, people who are similiar to the sleep apnea people in age, gender, and sex, who have not had a sleep apnea test.</p>
+<pre class="r"><code>source(&#39;lib/functions.R&#39;)
+source( &quot;lib/get_data.R&quot;)
+# -------------------------------------------------
 
-    :=</code></pre>
-<pre><code>Loading required package: seas</code></pre>
-<pre><code>Loading required package: magrittr</code></pre>
-<pre><code>Loading required package: stringr</code></pre>
-<pre><code>Loading required package: broom</code></pre>
-<pre><code>Loading required package: knitr</code></pre>
-<pre><code>Loading required package: kableExtra</code></pre>
-<pre><code>Loading required package: pander</code></pre>
-<pre><code>Loading required package: lubridate</code></pre>
-<pre><code>
-Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:data.table&#39;:
+my_db_get_query( &#39;select * from mbs_apnea_unique&#39; ) %&gt;%
+  mutate( type=&#39;apnea&#39;) %&gt;%
+as.tibble() %&gt;%
+{.} -&gt; ap
 
-    hour, isoweek, mday, minute, month, quarter, second, wday,
-    week, yday, year</code></pre>
-<pre><code>The following object is masked from &#39;package:base&#39;:
 
-    date</code></pre>
-<pre><code>Loading required package: tmap</code></pre>
-<pre><code>Loading required package: tmaptools</code></pre>
-<pre><code>Loading required package: grid</code></pre>
-<pre><code>Loading required package: readstata13</code></pre>
-<pre><code>Loading required package: foreign</code></pre>
-<pre><code>Loading required package: ordinal</code></pre>
-<pre><code>Loading required package: DataCache</code></pre>
-<pre><code>
-Attaching package: &#39;DataCache&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:lubridate&#39;:
+my_db_get_query( &#39;select * from mbs_apnea_matched_sample &#39; ) %&gt;%
+  anti_join( ap, by=&#39;pin&#39;) %&gt;%
+  mutate( type=&#39;non-apnea&#39;) %&gt;%
+  as.tibble() %&gt;%
+  {.} -&gt; apm
 
-    now</code></pre>
-<pre><code>Loading required package: shiny</code></pre>
-<pre><code>
-Attaching package: &#39;shiny&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:pander&#39;:
-
-    p</code></pre>
-<pre><code>Loading required package: tidyverse</code></pre>
-<pre><code>── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>✔ ggplot2 2.2.1     ✔ readr   1.1.1
-✔ tibble  1.4.2     ✔ purrr   0.2.5
-✔ tidyr   0.8.1     ✔ dplyr   0.7.6
-✔ ggplot2 2.2.1     ✔ forcats 0.3.0</code></pre>
-<pre><code>── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
-✖ lubridate::as.difftime() masks base::as.difftime()
-✖ dplyr::between()         masks data.table::between()
-✖ lubridate::date()        masks base::date()
-✖ tidyr::extract()         masks magrittr::extract()
-✖ dplyr::filter()          masks stats::filter()
-✖ dplyr::first()           masks data.table::first()
-✖ lubridate::hour()        masks data.table::hour()
-✖ lubridate::intersect()   masks base::intersect()
-✖ lubridate::isoweek()     masks data.table::isoweek()
-✖ dplyr::lag()             masks stats::lag()
-✖ dplyr::last()            masks data.table::last()
-✖ lubridate::mday()        masks data.table::mday()
-✖ lubridate::minute()      masks data.table::minute()
-✖ lubridate::month()       masks data.table::month()
-✖ DataCache::now()         masks lubridate::now()
-✖ lubridate::quarter()     masks data.table::quarter()
-✖ lubridate::second()      masks data.table::second()
-✖ purrr::set_names()       masks magrittr::set_names()
-✖ lubridate::setdiff()     masks base::setdiff()
-✖ dplyr::slice()           masks ordinal::slice()
-✖ purrr::transpose()       masks data.table::transpose()
-✖ lubridate::union()       masks base::union()
-✖ lubridate::wday()        masks data.table::wday()
-✖ lubridate::week()        masks data.table::week()
-✖ lubridate::yday()        masks data.table::yday()
-✖ lubridate::year()        masks data.table::year()</code></pre>
-<pre><code>Loading required package: RPostgreSQL</code></pre>
-<pre><code>Loading required package: DBI</code></pre>
-<pre><code>Loading required package: keyring</code></pre>
+ap %&gt;%
+  select( pin, sex, yob, nservices, type ) %&gt;%
+  bind_rows( apm ) %&gt;%
+  mutate( scat = cut_number( nservices, 5  ),
+         yob_group = cut_number( yob, 5 )) %&gt;%
+  {.} -&gt; apboth</code></pre>
 <p>how many of each type of person are there</p>
 <pre class="r"><code>apboth %&gt;%
   count( type )</code></pre>
@@ -495,19 +487,22 @@ Attaching package: &#39;shiny&#39;</code></pre>
 </div>
 <div id="initial-exploration" class="section level1">
 <h1>initial exploration</h1>
-<p>Take all pp who had apnea, break them into gender, birth year</p>
-<p>Take everyone else who had the same gender and birthyear</p>
-<p>count the number of services for each person took over the 20 year period</p>
-<p>note: the apnea people are much larger service users than the non-apnea pp, in general</p>
+<div id="what-does-the-apnea-dataset-look-like" class="section level2">
+<h2>what does the apnea dataset look like</h2>
+<ul>
+<li><p>Take all pp who had apnea, break them into gender, birth year</p></li>
+<li><p>Take everyone else who had the same gender and birthyear</p></li>
+<li><p>count the number of services for each person took over the 20 year period</p></li>
+<li><p>note: the apnea people are generally larger service users than the non-apnea pp</p></li>
+</ul>
 <pre class="r"><code>apboth %&gt;%
   ggplot() +
   geom_histogram( aes( nservices, fill=type)) +
   scale_x_log10() + 
-  facet_grid( type ~ sex, scales=&quot;free_x&quot; )</code></pre>
+  facet_grid( type ~ sex, scales=&quot;free_y&quot; )</code></pre>
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="figure/createApneaSample.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Due to this disparity, we match each apnea person with a simliar person from from the non-apnea set, who had the same number of services, and use them.</p>
-<p>First, make sure that every apnea has a match in non-apnea</p>
+<p><img src="figure/createApneaSample.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /> ## match apnea with non-apnea Due to this disparity, we match each apnea person with a simliar person from from the non-apnea set, who had the same number of services, and use them.</p>
+<p>First, make sure that every apnea has a match in non-apnea. 1) get the target, and 2) make sure that the non-apnea has each of the target items</p>
 <pre class="r"><code>apboth %&gt;%
   filter( type==&quot;apnea&quot;) %&gt;%
   count( sex, yob_group, scat ) %&gt;%
@@ -574,7 +569,7 @@ apboth %&gt;%
         x[sample.int(length(x), size, replace, prob)]
     }
 }
-&lt;bytecode: 0x55a9767bccc0&gt;
+&lt;bytecode: 0x55c8c7d7e338&gt;
 &lt;environment: namespace:base&gt;</code></pre>
 <div id="note-that-number-of-services-is-now-balanced-between-the-groups" class="section level3">
 <h3>Note that number of services is now balanced between the groups</h3>
@@ -582,9 +577,11 @@ apboth %&gt;%
 ggplot() +
   geom_histogram( aes( nservices, fill=type)) +
   scale_x_log10() + 
-  facet_grid( type ~ sex, scales=&quot;free&quot; )</code></pre>
+  facet_grid( type ~ sex)</code></pre>
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="figure/createApneaSample.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/createApneaSample.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ap_balanced %&gt;% write.csv(&quot;output/ap_balanced.csv&quot;)</code></pre>
+</div>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
