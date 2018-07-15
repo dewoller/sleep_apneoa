@@ -7,3 +7,5 @@ output:
 ---
 
 Welcome to my research website.
+
+Here is a link to the [balanced sleep apneoa dataset workings](createApenaSample.html), and [actual dataset](../blob/master/ap_balanced.csv).
