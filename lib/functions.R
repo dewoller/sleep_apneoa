@@ -16,7 +16,6 @@ safe_load("knitr")
 safe_load("kableExtra")
 safe_load("pander")
 safe_load("lubridate")
-safe_load("RPostgreSQL")
 
 # new map functions
 safe_load("tmap", 'https://cloud.r-project.org')

@@ -17,8 +17,8 @@ We want to investigate the sleep apnea pp, and to do this, we need to have somet
 
 ```{r set-options, echo=FALSE, cache=FALSE, warning=FALSE, results='hide'}
 
-source( "lib/get_data.R")
 source('lib/functions.R')
+source( "lib/get_data.R")
 # -------------------------------------------------
 
 my_db_get_query( 'select * from mbs_apnea_unique' ) %>%
@@ -33,14 +33,11 @@ my_db_get_query( 'select * from mbs_apnea_matched_sample ' ) %>%
   as.tibble() %>%
   {.} -> apm
 
-levels( apm$scat)
-levels( ap$scat)
-
 ap %>%
   select( pin, sex, yob, nservices, type ) %>%
   bind_rows( apm ) %>%
-  mutate( scat = cut_number( nservices, 30  ),
-         type=as.factor(type )) %>%
+  mutate( scat = cut_number( nservices, 5  ),
+         yob_group = cut_number( yob, 5 )) %>%
   {.} -> apboth
 
 ```
@@ -61,7 +58,7 @@ Take everyone else who had the same gender and birthyear
 
 count the number of services for each person took over the 20 year period
 
-note the apnea people are larger service users than the non-apnea pp
+note: the apnea people are much larger service users than the non-apnea pp, in general
 
 
 ```{r}
@@ -69,24 +66,75 @@ note the apnea people are larger service users than the non-apnea pp
 apboth %>%
   ggplot() +
   geom_histogram( aes( nservices, fill=type)) +
-  scale_y_log10( labels = scales::percent(type)) +
-  facet_grid( type ~ sex, scales="free" )
+  scale_x_log10() + 
+  facet_grid( type ~ sex, scales="free_x" )
 
 ```
 
 Due to this disparity, we match each apnea person with a simliar person from from the non-apnea set, who had the same number of services, and use them.
 
-
+First, make sure that every apnea has a match in non-apnea
 
 ```{r}
 
 apboth %>%
-  ggplot() +
-  geom_histogram( aes( nservices, fill=type)) +
-  facet_grid( type ~ sex, scales="free" )
+  filter( type=="apnea") %>%
+  count( sex, yob_group, scat ) %>%
+  rename( sample_size = n ) %>% 
+  { . } -> target_sample 
+
+apboth %>%
+  filter(type=='non-apnea') %>%
+  distinct( sex, yob_group, scat ) %>%
+  anti_join( target_sample)
 
 ```
 
+Now, make sure that there are sufficient non-apnea to match all apnea
+
+```{r}
+
+apboth %>%
+  filter(type=='non-apnea') %>%
+  count( sex, yob_group, scat ) %>%
+  rename( n_non = n ) %>%
+  inner_join( target_sample) %>%
+  mutate( diff = n_non - sample_size  ) %>%
+  filter( diff < 0 )
+
+```
+
+Now, extract matching non-apnea
+
+```{r}
+
+apboth %>%
+  filter(type=='non-apnea') %>%
+  nest( -sex, -yob_group, -scat ) %>%
+  inner_join( target_sample) %>%
+  mutate( sample = map2( data, sample_size , sample_n )) %>%
+  unnest(sample) %>%
+  bind_rows( ap ) %>% 
+  { . } -> ap_balanced
+
+ap_balanced
+
+ sample
 
 
+```
+
+### Note that number of services is now balanced between the groups
+
+```{r}
+
+ap_balanced %>%
+ggplot() +
+  geom_histogram( aes( nservices, fill=type)) +
+  scale_x_log10() + 
+  facet_grid( type ~ sex, scales="free" )
+
+
+
+```
 

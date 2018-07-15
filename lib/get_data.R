@@ -1,3 +1,5 @@
+safe_load("RPostgreSQL")
+safe_load("keyring")
 # -------------------------------------------------
 get_usage_df <- function( ) {
 
