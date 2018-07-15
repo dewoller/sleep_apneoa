@@ -1,0 +1,92 @@
+---
+title:           Initial exploration of Sleep apneoa 
+author:          Dennis Wollersheim 
+date:            11.07.2018
+linkcolor:       cyan
+citecolor:       grey
+output:
+  pdf_document:
+    highlight:   zenburn
+---
+
+\tableofcontents
+
+# motivation 
+We want to investigate the sleep apnea pp, and to do this, we need to have something to compare them to.  We will create a list of patients, consisting of all the sleep apnea people, and then also, people who are similiar to the sleep apnea people, who have not had a sleep anpnea test. 
+
+
+```{r set-options, echo=FALSE, cache=FALSE, warning=FALSE, results='hide'}
+
+source( "lib/get_data.R")
+source('lib/functions.R')
+# -------------------------------------------------
+
+my_db_get_query( 'select * from mbs_apnea_unique' ) %>%
+  mutate( type='apnea') %>%
+as.tibble() %>%
+{.} -> ap
+
+
+my_db_get_query( 'select * from mbs_apnea_matched_sample ' ) %>%
+  anti_join( ap, by='pin') %>%
+  mutate( type='non-apnea') %>%
+  as.tibble() %>%
+  {.} -> apm
+
+levels( apm$scat)
+levels( ap$scat)
+
+ap %>%
+  select( pin, sex, yob, nservices, type ) %>%
+  bind_rows( apm ) %>%
+  mutate( scat = cut_number( nservices, 30  ),
+         type=as.factor(type )) %>%
+  {.} -> apboth
+
+```
+
+how many of each type of person are there
+
+```{r}
+apboth %>%
+  count( type )
+
+```
+
+
+# initial exploration
+Take all pp who had apnea, break them into gender, birth year
+
+Take everyone else who had the same gender and birthyear  
+
+count the number of services for each person took over the 20 year period
+
+note the apnea people are larger service users than the non-apnea pp
+
+
+```{r}
+
+apboth %>%
+  ggplot() +
+  geom_histogram( aes( nservices, fill=type)) +
+  scale_y_log10( labels = scales::percent(type)) +
+  facet_grid( type ~ sex, scales="free" )
+
+```
+
+Due to this disparity, we match each apnea person with a simliar person from from the non-apnea set, who had the same number of services, and use them.
+
+
+
+```{r}
+
+apboth %>%
+  ggplot() +
+  geom_histogram( aes( nservices, fill=type)) +
+  facet_grid( type ~ sex, scales="free" )
+
+```
+
+
+
+
