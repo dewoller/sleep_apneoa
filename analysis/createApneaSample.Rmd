@@ -24,28 +24,28 @@ source( "lib/get_data.R")
 my_db_get_query( 'select * from mbs_apnea_unique' ) %>%
   mutate( type='apnea') %>%
 as.tibble() %>%
-{.} -> ap
+{.} -> apnea_users
 
 
 my_db_get_query( 'select * from mbs_apnea_matched_sample ' ) %>%
-  anti_join( ap, by='pin') %>%
+  anti_join( apnea_users, by='pin') %>%
   mutate( type='non-apnea') %>%
   as.tibble() %>%
-  {.} -> apm
+  {.} -> non_apnea_users
 
-ap %>%
+apnea_users %>%
   select( pin, sex, yob, nservices, type ) %>%
-  bind_rows( apm ) %>%
+  bind_rows( non_apnea_users ) %>%
   mutate( scat = cut_number( nservices, 5  ),
          yob_group = cut_number( yob, 5 )) %>%
-  {.} -> apboth
+  {.} -> combined_users
 
 ```
 
 how many of each type of person are there
 
 ```{r}
-apboth %>%
+combined_users %>%
   count( type )
 
 ```
@@ -64,38 +64,43 @@ apboth %>%
 
 ```{r}
 
-apboth %>%
+combined_users %>%
   ggplot() +
   geom_histogram( aes( nservices, fill=type)) +
   scale_x_log10() + 
   facet_grid( type ~ sex, scales="free_y" )
 
 ```
+
 ## match apnea with non-apnea
 Due to this disparity, we match each apnea person with a simliar person from from the non-apnea set, who had the same number of services, and use them.
 
-First, make sure that every apnea has a match in non-apnea. 1) get the target, and 2) make sure that the non-apnea has each of the target items
+First, make sure that every apnea has a match in non-apnea. 
+  # get the target, and 
+  # make sure that the non-apnea has each of the target items
 
 ```{r}
 
-apboth %>%
+combined_users %>%
   filter( type=="apnea") %>%
   count( sex, yob_group, scat ) %>%
   rename( sample_size = n ) %>% 
   { . } -> target_sample 
 
-apboth %>%
+combined_users %>%
   filter(type=='non-apnea') %>%
   distinct( sex, yob_group, scat ) %>%
   anti_join( target_sample)
 
 ```
 
+## do we have enough non-apnea in each category?
+
 Now, make sure that there are sufficient non-apnea to match all apnea
 
 ```{r}
 
-apboth %>%
+combined_users %>%
   filter(type=='non-apnea') %>%
   count( sex, yob_group, scat ) %>%
   rename( n_non = n ) %>%
@@ -105,27 +110,29 @@ apboth %>%
 
 ```
 
-Now, extract matching non-apnea
+## Extract matching non-apnea
 
 ```{r}
 
-apboth %>%
+combined_users %>%
   filter(type=='non-apnea') %>%
   nest( -sex, -yob_group, -scat ) %>%
   inner_join( target_sample) %>%
   mutate( sample = map2( data, sample_size , sample_n )) %>%
   unnest(sample) %>%
-  bind_rows( ap ) %>% 
+  bind_rows( apnea_users ) %>% 
+  select(-sample_size, -yob_group, -scat) %>%
+  rename( first_apnea = first_service) %>%
+  rename( last_apnea = last_service) %>%
   { . } -> ap_balanced
 
 ap_balanced
 
- sample
-
-
 ```
 
-### Note that number of services is now balanced between the groups
+# Is result balanced?
+
+Note that number of services is now balanced between the groups
 
 ```{r}
 
@@ -138,6 +145,23 @@ ggplot() +
 ap_balanced %>% write.csv("output/ap_balanced.csv")
 
 ```
+
+# Output final result
+
+The dataset can be found [here](https://github.com/dewoller/sleep_apneoa/raw/master/output/ap_balanced.csv).
+
+|field             | description|
+|:-------------|-|
+|sex           | |
+|pin           | |
+|yob           | |
+|nservices     | number of services overall for this person |
+|type          | apnea or non-apnea  |
+|item          | first apnea test item |
+|first_apnea | first apnea test date |
+|last_apnea  | last apnea test data  |
+|ndays         | number of days between first and last test 2018-07-16 |
+|ntests        | number of apnea tests overall |
 
 
 
