@@ -12,10 +12,10 @@ output:
 \tableofcontents
 
 # motivation 
-We want to investigate the sleep apnea pp, and to do this, we need to have something to compare them to.  We will create a list of patients, consisting of all the sleep apnea people, and then also, people who are similiar to the sleep apnea people, who have not had a sleep anpnea test. 
+We want to investigate the sleep apnea pp, and to do this, we need to have something to compare them to.  We will create a list of patients, consisting of all the sleep apnea people, and then also, people who are similiar to the sleep apnea people in age, gender, and sex, who have not had a sleep apnea test. 
 
 
-```{r set-options, echo=FALSE, cache=FALSE, warning=FALSE, results='hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 
 source('lib/functions.R')
 source( "lib/get_data.R")
@@ -52,13 +52,14 @@ apboth %>%
 
 
 # initial exploration
-Take all pp who had apnea, break them into gender, birth year
+## what does the apnea dataset look like
+ * Take all pp who had apnea, break them into gender, birth year
 
-Take everyone else who had the same gender and birthyear  
+ * Take everyone else who had the same gender and birthyear  
 
-count the number of services for each person took over the 20 year period
+ * count the number of services for each person took over the 20 year period
 
-note: the apnea people are much larger service users than the non-apnea pp, in general
+ * note: the apnea people are generally larger service users than the non-apnea pp
 
 
 ```{r}
@@ -67,13 +68,13 @@ apboth %>%
   ggplot() +
   geom_histogram( aes( nservices, fill=type)) +
   scale_x_log10() + 
-  facet_grid( type ~ sex, scales="free_x" )
+  facet_grid( type ~ sex, scales="free_y" )
 
 ```
-
+## match apnea with non-apnea
 Due to this disparity, we match each apnea person with a simliar person from from the non-apnea set, who had the same number of services, and use them.
 
-First, make sure that every apnea has a match in non-apnea
+First, make sure that every apnea has a match in non-apnea. 1) get the target, and 2) make sure that the non-apnea has each of the target items
 
 ```{r}
 
@@ -132,9 +133,11 @@ ap_balanced %>%
 ggplot() +
   geom_histogram( aes( nservices, fill=type)) +
   scale_x_log10() + 
-  facet_grid( type ~ sex, scales="free" )
+  facet_grid( type ~ sex)
 
-
+ap_balanced %>% write.csv("output/ap_balanced.csv")
 
 ```
+
+
 
