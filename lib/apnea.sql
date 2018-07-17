@@ -28,3 +28,11 @@ from mbs JOIN patient p USING (pin)
 join mbs_apnea_yob_sex using (sex, yob )
 group by 1,2,3 ;
 
+select pin, spply_dt, pbs_code, 
+atc_code, 
+pbs_rgltn24_adjst_qty as quantity
+from pbs_rr JOIN pbs_item using (pbs_code)
+where atc_code like 'N02%' limit 100; 
+
+
+

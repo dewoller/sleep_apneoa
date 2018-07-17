@@ -28,12 +28,12 @@ my_dbWriteTable <- function ( df, table_name ) {
 # -------------------------------------------------
 
 # -------------------------------------------------
-my_db_get_query <- function ( query ) {
+my_db_get_query <- function ( query, .host="localhost"  ) {
 
   # loads the PostgreSQL driver
   drv <- dbDriver("PostgreSQL")
   con <- dbConnect(drv, dbname = "him5ihc_pbs",
-          host = "localhost", port = 5432,
+          host = .host, port = 5432,
           user = "dewoller", password = key_get('mofi', 'dewoller'))
   on.exit(dbDisconnect(con))
   dbGetQuery( con, query )
