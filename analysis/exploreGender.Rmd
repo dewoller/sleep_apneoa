@@ -1,0 +1,108 @@
+---
+title:           Initial exploration of Sleep apneoa 
+author:          Dennis Wollersheim 
+date:            11.07.2018
+linkcolor:       cyan
+citecolor:       grey
+output:
+  pdf_document:
+    highlight:   zenburn
+---
+
+\tableofcontents
+
+```{r results='hide', message=FALSE, warning=FALSE}
+
+source('lib/functions.R')
+# -------------------------------------------------
+
+```
+
+
+```{r}
+
+df_pp = read.csv('data/opioid_people.csv') %>% as.tibble()
+df_scripts = read.csv('data/opioid_scripts.csv') %>% as.tibble()
+
+
+df_all = df_pp %>% inner_join( df_scripts)
+
+df_pp %>% 
+  group_by( sex ) %>%
+  summarise( mean(yob))
+
+```
+
+histogram 
+
+
+```{r}
+
+ggplot( df_pp, aes( yob, fill=sex )) + 
+  geom_histogram() +
+  facet_wrap( ~ sex )
+
+```
+
+#  by 10 year age groups
+```{r}
+
+df_pp %>% 
+  mutate( yob_group = cut(yob, 10 )) %>%
+  count(yob_group, sex )
+
+
+```
+
+# Users by ten year age group
+```{r}
+
+df_pp %>% 
+  mutate( yob_group = cut(yob, 10 )) %>%
+  count(sex )
+```
+
+# number of prescription by sex
+
+```{r}
+df_all %>% 
+  count( sex ) 
+
+```
+
+# pills per gender
+
+```{r}
+df_all %>% 
+  group_by( sex ) %>%
+  summarise( sum(quantity) ) 
+
+
+df_all %>% 
+  group_by( sex ) %>%
+  summarise( mean(quantity) ) 
+
+
+```
+
+# average number of pills per person, per gender
+```{r}
+
+df_all %>% 
+  group_by( pin, sex ) %>%
+  summarise( n_per_person =  sum(quantity) )  %>%
+  group_by( sex ) %>%
+  summarise( mean( n_per_person ))
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
