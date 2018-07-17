@@ -1,10 +1,12 @@
-name: "apneoa"
+name: "Opioids exploration"
 output_dir: "../docs"
 navbar:
-  title: "apneoa"
+  title: "Opioids"
   left:
     - text: "Home"
       href: index.html
+    - text: "Explore Gender"
+      href: exploreGender.html
     - text: "About"
       href: about.html
     - text: "License"

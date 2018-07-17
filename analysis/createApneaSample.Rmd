@@ -162,7 +162,7 @@ q <- "
 select pin, spply_dt, pbs_code, 
 atc_code, 
 pbs_rgltn24_adjst_qty as quantity
-from pbs JOIN pbs_item using (pbs_code)
+from pbs_r JOIN pbs_item using (pbs_code)
 where pin in (%s)
 "
 
@@ -198,5 +198,11 @@ The [apnea and matched non-apnea patients can be found here](https://github.com/
 
 
 The [Opioid drugs presribed to these patients are here](https://github.com/dewoller/sleep_apneoa/raw/master/output/ap_N02.csv).
+
+```{r}
+
+
+
+```
 
 
